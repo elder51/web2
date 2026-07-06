@@ -42,14 +42,23 @@
             @csrf
             <div class="mb-3">
                 <label for="user_id" class="form-label">Usuário</label>
-                <select class="form-select" id="user_id" name="user_id" required>
+                <select class="form-select" id="user_id" name="user_id" 
+                @disabled($book->isBorrowed()) required>
                     <option value="" selected>Selecione um usuário</option>
                     @foreach($users as $user)
                         <option value="{{ $user->id }}">{{ $user->name }}</option>
                     @endforeach
                 </select>
             </div>
-            <button type="submit" class="btn btn-success">Registrar Empréstimo</button>
+
+            <button type="submit" class="btn btn-success" 
+            @disabled($book->isBorrowed())>Registrar Empréstimo</button>
+
+            @if($book->isBorrowed())
+                <div class="text-danger mt-2">
+                    Este livro já está emprestado.
+                </div>
+            @endif
         </form>
     </div>
 </div>

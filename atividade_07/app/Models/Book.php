@@ -40,4 +40,16 @@ class Book extends Model
         ->withPivot('id', 'borrowed_at', 'returned_at')
         ->withTimestamps();
     }
+
+    public function borrowings()
+    {
+        return $this->hasMany(Borrowing::class);
+    }
+
+    public function isBorrowed(): bool
+    {
+        return $this->borrowings()
+        ->whereNull('returned_at')
+        ->exists();
+    }
 }

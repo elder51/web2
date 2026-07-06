@@ -15,6 +15,16 @@ class BorrowingController extends Controller
             'user_id' => 'required|exists:users,id',
         ]);
 
+        $borrowingOpen = Borrowing::where('book_id', $book->id)
+        ->whereNull('returned_at')
+        ->exists();
+
+        if ($borrowingOpen) {
+            return redirect()
+            ->route('books.show', $book)
+            ->with('error', 'Este livro já está emprestado.');
+        }
+
         Borrowing::create([
             'user_id' => $request->user_id,
             'book_id' => $book->id,
