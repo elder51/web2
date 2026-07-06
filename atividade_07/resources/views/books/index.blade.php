@@ -2,6 +2,10 @@
 
 @section('content')
 <div class="container">
+    <a href="{{ route('home') }}" class="btn btn-secondary mb-3">
+        <i class="bi bi-arrow-left"></i> Voltar
+    </a>
+
     <h1 class="my-4">Lista de Livros</h1>
 
     @if(session('success'))
