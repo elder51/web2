@@ -15,6 +15,7 @@
                 <th>Nome</th>
                 <th>Email</th>
                 <th>Perfil</th>
+                <th>Debito</th>
                 <th>Ações</th>
             </tr>
         </thead>
@@ -25,6 +26,7 @@
                     <td>{{ $user->name }}</td>
                     <td>{{ $user->email }}</td>
                     <td>{{ $user->role }}</td>
+                    <td>{{ $user->debit }}</td>
                     <td>
                         <a href="{{ route('users.show', $user) }}" class="btn btn-info btn-sm">
                             <i class="bi bi-eye"></i> Visualizar
@@ -35,6 +37,16 @@
                                 <i class="bi bi-pencil"></i> Editar
                             </a>
                         @endcan
+
+                        @if($user->debit > 0)
+                            <form action="{{ route('users.payDebit', $user) }}" method="POST" class="d-inline-block m-0">
+                                @csrf
+                                @method('PATCH')
+                                <button class="btn btn-success btn-sm" style="min-width: 110px;">
+                                    <i class="bi bi-cash-coin"></i> Quitar Multa
+                                </button>
+                            </form>
+                        @endif
                     </td>
                 </tr>
             @endforeach

@@ -28,6 +28,11 @@ class UserPolicy
         return $user->role === 'admin';
     }
 
+    public function payDebit(User $user): bool
+    {
+        return in_array($user->role, ['admin', 'bibliotecario']);
+    }
+
     public function delete(User $user, User $model): bool
     {
         return false;

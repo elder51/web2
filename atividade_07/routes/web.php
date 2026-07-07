@@ -17,6 +17,8 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+Route::middleware('auth')->group(function () {
 Route::resource('categories', CategoryController::class);
 Route::resource('authors', AuthorController::class);
 Route::resource('publishers', PublisherController::class);
@@ -30,8 +32,12 @@ Route::post('/books/create-select', [BookController::class, 'storeWithSelect'])-
 Route::resource('books', BookController::class)->except(['create', 'store']);
 Route::resource('users', UserController::class)->except(['create', 'store', 'destroy']);
 
+Route::get('/users-with-debt', [UserController::class, 'withDebt'])->name('users.withDebt');
+Route::patch('/users/{user}/pay-debit', [UserController::class, 'payDebit'])->name('users.payDebit');
+
 Route::post('/books/{book}/borrow', [BorrowingController::class, 'store'])->name('books.borrow');
 
 Route::get('/users/{user}/borrowings', [BorrowingController::class, 'userBorrowings'])->name('users.borrowings');
 
 Route::patch('/borrowings/{borrowing}/return', [BorrowingController::class, 'returnBook'])->name('borrowings.return');
+});

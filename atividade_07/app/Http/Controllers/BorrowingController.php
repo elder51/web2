@@ -15,6 +15,8 @@ class BorrowingController extends Controller
             'user_id' => 'required|exists:users,id',
         ]);
 
+        $user = User::findOrFail($request->user_id);
+
         $bookBorrowingOpen = Borrowing::where('book_id', $book->id)
         ->whereNull('returned_at')
         ->exists();
@@ -35,6 +37,12 @@ class BorrowingController extends Controller
             ->with('error', 'Este usuário já atingiu o limite de 5 livros emprestados.');
         }
 
+        if ($user->debit > 0) {
+            return redirect()
+            ->route('books.show', $book)
+            ->with('error', 'Este usuário possui multas pendentes.');
+        }
+
         Borrowing::create([
             'user_id' => $request->user_id,
             'book_id' => $book->id,
@@ -46,6 +54,18 @@ class BorrowingController extends Controller
 
     public function returnBook(Borrowing $borrowing)
     {
+        $user = $borrowing->user;
+
+        $borrowedAt = $borrowing->borrowed_at;
+        $returnedAt = now();
+        $days = $borrowedAt->diffInDays($returnedAt);
+
+        if ($days > 15) {
+            $delay = $days - 15;
+            $fine = $delay * 0.50;
+            $user->increment('debit', $fine);
+        }
+
         $borrowing->update([
             'returned_at' => now(),
         ]);
